@@ -1,11 +1,15 @@
 
 
+import 'dart:io';
+
 import 'package:basic_utils/basic_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/model/FirebaseHelper.dart';
 import 'package:flutter_chat/model/MyUser.dart';
+import 'package:flutter_chat/widgets/CustomImage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileController extends StatefulWidget {
 
@@ -42,6 +46,24 @@ class _ProfileControllerState extends State<ProfileController> {
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            new CustomImage(user.imageUrl, user.initiales, MediaQuery.of(context).size.width / 5),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                new IconButton(
+                    icon: new Icon(Icons.camera_enhance),
+                    onPressed: () {
+                      _takeAPic(ImageSource.camera);
+                    }
+                ),
+                new IconButton(
+                    icon: new Icon(Icons.photo_library),
+                    onPressed: () {
+                      _takeAPic(ImageSource.gallery);
+                    }
+                )
+              ],
+            ),
             new TextField(
               decoration: new InputDecoration(hintText: "Prénom"),
               controller: new TextEditingController(text: user.prenom),
@@ -145,5 +167,16 @@ class _ProfileControllerState extends State<ProfileController> {
     });
   }
   
+  Future<void> _takeAPic(ImageSource source) async {
+    PickedFile img = await ImagePicker().getImage(source: source, maxWidth: 500, maxHeight: 500);
+    if(img != null) {
+      File file = new File(img.path);
+      FirebaseHelper().savePic(file, user.uid).then((url) {
+        Map map = user.toMap();
+        map["imageUrl"] = url;
+        FirebaseHelper().addUser(user.uid, map).then((value) => _getUser());
+      });
+    }
+  }
 
 }

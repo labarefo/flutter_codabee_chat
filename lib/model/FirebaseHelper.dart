@@ -1,8 +1,11 @@
 
 
+import 'dart:io';
+
 import 'package:basic_utils/basic_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_chat/model/MyUser.dart';
 
 class FirebaseHelper {
@@ -54,4 +57,17 @@ class FirebaseHelper {
   Future<void> addUser(String uid, Map map) async {
     await entry_user.child(uid).set(map);
   }
+
+  static final entryStorage = FirebaseStorage.instance.ref();
+  static final entryStorageUser = entryStorage.child("user");
+
+  Future<String> savePic(File file, String uid) async {
+    Reference reference = entryStorageUser.child(uid);
+    UploadTask task = reference.putFile(file);
+    TaskSnapshot snapshot = task.snapshot;
+    final url = await snapshot.ref.getDownloadURL();
+
+    return url;
+  }
+
 }
