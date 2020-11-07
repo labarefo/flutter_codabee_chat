@@ -20,6 +20,10 @@ class MyUser {
 
   }
 
+  String fullName(){
+    return "$prenom $nom";
+  }
+
   Map toMap() {
     return {
       "uid": uid,
