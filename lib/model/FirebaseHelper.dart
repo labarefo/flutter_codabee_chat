@@ -3,6 +3,7 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_chat/model/MyUser.dart';
 
 class FirebaseHelper {
   final _auth = FirebaseAuth.instance;
@@ -15,12 +16,19 @@ class FirebaseHelper {
     return user;
   }
 
-  Future<void> handleSignOut() async {
-    _auth.signOut();
+  Future<bool> handleSignOut() async {
+    await _auth.signOut();
+    return true;
   }
 
-  User getUser() {
-    return _auth.currentUser;
+  String getUserUid() {
+    return _auth.currentUser.uid;
+  }
+
+  Future<MyUser> getUser(String uid) async {
+    DataSnapshot snapshot = await entry_user.child(uid).once();
+    MyUser user = new MyUser(snapshot);
+    return user;
   }
 
   Future<User> create(String mail, String mdp, String prenom, String nom) async{
@@ -43,7 +51,7 @@ class FirebaseHelper {
   static final entryPoint = FirebaseDatabase.instance.reference();
   final entry_user = entryPoint.child("users");
 
-  addUser(String uid, Map map){
-    entry_user.child(uid).set(map);
+  Future<void> addUser(String uid, Map map) async {
+    await entry_user.child(uid).set(map);
   }
 }

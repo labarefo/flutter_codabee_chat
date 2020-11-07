@@ -10,7 +10,6 @@ import 'package:flutter_chat/model/FirebaseHelper.dart';
 
 class MainAppController extends StatelessWidget {
 
-  User user = FirebaseHelper().getUser();
 
   @override
   Widget build(BuildContext context) {
