@@ -19,17 +19,12 @@ class ContactsController extends StatefulWidget {
 
 class _ContactsControllerState extends State<ContactsController> {
   String uid;
-  MyUser user;
+  //MyUser user;
 
   @override
   void initState() {
     super.initState();
     uid = FirebaseHelper().getUserUid();
-    FirebaseHelper().getUser(uid).then((value) {
-      setState(() {
-        user = value;
-      });
-    });
     
   }
 

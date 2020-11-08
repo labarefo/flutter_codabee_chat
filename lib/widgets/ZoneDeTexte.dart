@@ -1,14 +1,17 @@
 
 
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/model/FirebaseHelper.dart';
 import 'package:flutter_chat/model/MyUser.dart';
 
 class ZoneDeTexte extends StatefulWidget {
 
   MyUser partenaire;
+  MyUser me;
 
 
-  ZoneDeTexte(this.partenaire);
+  ZoneDeTexte(this.me, this.partenaire);
 
   @override
   State<StatefulWidget> createState() {
@@ -37,11 +40,25 @@ class _ZoneDeTexteState extends State<ZoneDeTexte> {
               maxLines: null,
             ),
           ),
-          new IconButton(icon: new Icon(Icons.send), onPressed: null),
+          new IconButton(icon: new Icon(Icons.send), onPressed: _sendButtonPressed),
 
         ],
       ),
     );
   }
 
+
+  void _sendButtonPressed() {
+    if(StringUtils.isNotNullOrEmpty(_textController.text)){
+      String text = _textController.text;
+      // 1. envoyer sur forebase
+      FirebaseHelper().sendMessage(widget.me, widget.partenaire, text);
+      // 2. effacer
+      _textController.clear();
+      // 3. fermer
+      FocusScope.of(context).requestFocus(FocusNode());
+    }else {
+
+    }
+  }
 }

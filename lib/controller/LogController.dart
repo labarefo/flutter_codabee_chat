@@ -75,7 +75,7 @@ class _LogControllerState extends State<LogController> {
           decoration: new InputDecoration(hintText: "Adresse mail"),
           onChanged: (str){
             setState(() {
-              _adresseMail = str;
+              _adresseMail = str.trim();
             });
           },
         )
@@ -87,7 +87,7 @@ class _LogControllerState extends State<LogController> {
         decoration: new InputDecoration(hintText: "Mot de passe"),
         onChanged: (str){
           setState(() {
-            _password = str;
+            _password = str.trim();
           });
         },
       )
@@ -99,7 +99,7 @@ class _LogControllerState extends State<LogController> {
             decoration: new InputDecoration(hintText: "Prénom"),
             onChanged: (str){
               setState(() {
-                _prenom = str;
+                _prenom = str.trim();
               });
             },
           )
@@ -110,7 +110,7 @@ class _LogControllerState extends State<LogController> {
             decoration: new InputDecoration(hintText: "Nom"),
             onChanged: (str){
               setState(() {
-                _nom = str;
+                _nom = str.trim();
               });
             },
           )

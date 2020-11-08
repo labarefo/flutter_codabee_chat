@@ -1,6 +1,7 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/model/FirebaseHelper.dart';
 
 class CustomImage extends StatelessWidget {
 
@@ -23,7 +24,8 @@ class CustomImage extends StatelessWidget {
         ),
       );
     }
-    ImageProvider provider = new CachedNetworkImageProvider(imageUrl);
+
+    ImageProvider provider = CachedNetworkImageProvider(imageUrl);
     if(radius == null){
       // image dans chat
       return new InkWell(

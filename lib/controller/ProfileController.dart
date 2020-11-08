@@ -68,14 +68,14 @@ class _ProfileControllerState extends State<ProfileController> {
               decoration: new InputDecoration(hintText: "Prénom"),
               controller: new TextEditingController(text: user.prenom),
               onChanged: (str){
-                prenom = str;
+                prenom = str.trim();
               },
             ),
             new TextField(
               decoration: new InputDecoration(hintText: "Nom"),
               controller: new TextEditingController(text: user.nom),
               onChanged: (str){
-                nom = str;
+                nom = str.trim();
                 print(nom);
               },
             ),

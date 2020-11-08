@@ -49,14 +49,45 @@ class FirebaseHelper {
     return user;
   }
 
+
   // Database
 
   static final entryPoint = FirebaseDatabase.instance.reference();
   final entry_user = entryPoint.child("users");
+  final entry_message = entryPoint.child("messages");
 
   Future<void> addUser(String uid, Map map) async {
     await entry_user.child(uid).set(map);
   }
+
+
+  Future sendMessage (MyUser me, MyUser partenaire , String texte) async {
+    String ref = _getMessageRef(me.uid, partenaire.uid);
+    String dateStr = DateTime.now().millisecondsSinceEpoch.toString();
+    Map map = {
+      "from": me.uid,
+      "to": partenaire.uid,
+      "text": texte,
+      "dateString": dateStr
+    };
+    
+    entry_message.child(ref).child(dateStr).set(map);
+  }
+
+  String _getMessageRef(String from, String to) {
+    List<String> list = [from, to];
+    list.sort((a,b) => a.compareTo(b));
+    String ref = "";
+    for(var x in list ){
+      ref += x + "+";
+    }
+    return ref;
+  }
+
+  DatabaseReference getConversationsRef(MyUser from, MyUser to) {
+    return entry_message.child(_getMessageRef(from.uid, to.uid));
+  }
+
 
   static final entryStorage = FirebaseStorage.instance.ref();
   static final entryStorageUser = entryStorage.child("user");

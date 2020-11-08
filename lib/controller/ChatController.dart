@@ -1,5 +1,8 @@
 
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/model/FirebaseHelper.dart';
 import 'package:flutter_chat/model/MyUser.dart';
 import 'package:flutter_chat/widgets/CustomImage.dart';
 import 'package:flutter_chat/widgets/ZoneDeTexte.dart';
@@ -16,6 +19,20 @@ class ChatController extends StatefulWidget {
 }
 
 class _ChatControllerState extends State<ChatController> {
+
+  MyUser me;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseHelper().getUser(FirebaseHelper().getUserUid()).then((value) {
+      setState(() {
+        this.me = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -36,14 +53,22 @@ class _ChatControllerState extends State<ChatController> {
 
           children: [
             Flexible(
-              child: new Container(
-                color: Colors.red,
+              child: (me == null)
+              ? Center(child: new Text("Chargement..."))
+              : FirebaseAnimatedList(
+                  query: FirebaseHelper().getConversationsRef(me, widget.partenaire),
+                  sort: (a, b) => a.key.compareTo(b.key),
+                  itemBuilder: (BuildContext ctx, DataSnapshot snap,  Animation<double> animation, int index){
+                    return ListTile(
+                      title: new Text(snap.value["text"]),
+                    );
+                  }
               ),
             ),
 
             Divider(height: 2,),
 
-            new ZoneDeTexte(widget.partenaire)
+            new ZoneDeTexte(this.me, widget.partenaire)
           ],
         ),
       ),
