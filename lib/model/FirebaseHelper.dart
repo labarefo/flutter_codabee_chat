@@ -55,6 +55,7 @@ class FirebaseHelper {
   static final entryPoint = FirebaseDatabase.instance.reference();
   final entry_user = entryPoint.child("users");
   final entry_message = entryPoint.child("messages");
+  final entry_conv = entryPoint.child("conversations");
 
   Future<void> addUser(String uid, Map map) async {
     await entry_user.child(uid).set(map);
@@ -72,6 +73,18 @@ class FirebaseHelper {
     };
     
     entry_message.child(ref).child(dateStr).set(map);
+
+    entry_conv.child(me.uid)        .child(partenaire.uid).set(builConversation(partenaire, me.uid, texte, dateStr));
+    entry_conv.child(partenaire.uid).child(me.uid        ).set(builConversation(me        , me.uid, texte, dateStr));
+  }
+
+  Map builConversation(MyUser user, String sender, String last, String dateString) {
+    Map map = user.toMap();
+    map["monId"] = sender;
+    map["lastMessage"] = last;
+    map["dateString"] = dateString;
+
+    return map;
   }
 
   String _getMessageRef(String from, String to) {

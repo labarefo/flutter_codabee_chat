@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/model/FirebaseHelper.dart';
+import 'package:flutter_chat/model/Message.dart';
 import 'package:flutter_chat/model/MyUser.dart';
 import 'package:flutter_chat/widgets/CustomImage.dart';
 import 'package:flutter_chat/widgets/ZoneDeTexte.dart';
@@ -59,6 +60,7 @@ class _ChatControllerState extends State<ChatController> {
                   query: FirebaseHelper().getConversationsRef(me, widget.partenaire),
                   sort: (a, b) => a.key.compareTo(b.key),
                   itemBuilder: (BuildContext ctx, DataSnapshot snap,  Animation<double> animation, int index){
+                    Message msg = new Message(snap);
                     return ListTile(
                       title: new Text(snap.value["text"]),
                     );
