@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:basic_utils/basic_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/model/FirebaseHelper.dart';
@@ -171,7 +172,8 @@ class _ProfileControllerState extends State<ProfileController> {
     PickedFile img = await ImagePicker().getImage(source: source, maxWidth: 500, maxHeight: 500);
     if(img != null) {
       File file = new File(img.path);
-      FirebaseHelper().savePic(file, user.uid).then((url) {
+      Reference reference = FirebaseHelper().entryStorageUser.child(user.uid);
+      FirebaseHelper().savePic(file, reference).then((url) {
         Map map = user.toMap();
         map["imageUrl"] = url;
         FirebaseHelper().addUser(user.uid, map).then((value) => _getUser());

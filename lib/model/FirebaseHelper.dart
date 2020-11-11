@@ -62,14 +62,15 @@ class FirebaseHelper {
   }
 
 
-  Future sendMessage (MyUser me, MyUser partenaire , String texte) async {
+  Future sendMessage (MyUser me, MyUser partenaire , String texte, String imageUrl) async {
     String ref = _getMessageRef(me.uid, partenaire.uid);
     String dateStr = DateTime.now().millisecondsSinceEpoch.toString();
     Map map = {
       "from": me.uid,
       "to": partenaire.uid,
       "text": texte,
-      "dateString": dateStr
+      "dateString": dateStr,
+      "imageUrl": imageUrl
     };
     
     entry_message.child(ref).child(dateStr).set(map);
@@ -103,15 +104,13 @@ class FirebaseHelper {
 
 
   static final entryStorage = FirebaseStorage.instance.ref();
-  static final entryStorageUser = entryStorage.child("user");
+  final entryStorageUser = entryStorage.child("users");
+  final entryStorageMessage = entryStorage.child("messages");
 
-  Future<String> savePic(File file, String uid) async {
-    Reference reference = entryStorageUser.child(uid);
+  Future<String> savePic(File file, Reference reference) async {
     UploadTask task = reference.putFile(file);
     TaskSnapshot snapshot = task.snapshot;
-    final url = await snapshot.ref.getDownloadURL();
-
-    return url;
+    return snapshot.ref.getDownloadURL();
   }
 
 }

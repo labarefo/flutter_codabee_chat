@@ -1,9 +1,13 @@
 
 
+import 'dart:io';
+
 import 'package:basic_utils/basic_utils.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/model/FirebaseHelper.dart';
 import 'package:flutter_chat/model/MyUser.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ZoneDeTexte extends StatefulWidget {
 
@@ -31,8 +35,8 @@ class _ZoneDeTexteState extends State<ZoneDeTexte> {
       padding: EdgeInsets.all(3.5),
       child: new Row(
         children: [
-          new IconButton(icon: new Icon(Icons.camera_enhance), onPressed: null),
-          new IconButton(icon: new Icon(Icons.photo_library), onPressed: null),
+          new IconButton(icon: new Icon(Icons.camera_enhance), onPressed: () => takeAPic(ImageSource.camera)),
+          new IconButton(icon: new Icon(Icons.photo_library), onPressed: () => takeAPic(ImageSource.gallery)),
           new Flexible(
             child: new TextField(
               controller: _textController,
@@ -52,12 +56,26 @@ class _ZoneDeTexteState extends State<ZoneDeTexte> {
     if(StringUtils.isNotNullOrEmpty(_textController.text)){
       String text = _textController.text;
       // 1. envoyer sur forebase
-      FirebaseHelper().sendMessage(widget.me, widget.partenaire, text);
+      FirebaseHelper().sendMessage(widget.me, widget.partenaire, text, null);
       // 2. effacer
       _textController.clear();
       // 3. fermer
       FocusScope.of(context).requestFocus(FocusNode());
     }else {
+
+    }
+  }
+
+  Future<void> takeAPic(ImageSource source) async {
+    PickedFile picked = await ImagePicker().getImage(source: source, maxWidth: 1000, maxHeight: 1000);
+    if(picked != null) {
+      File file = new File(picked.path);
+
+      String date = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference reference = FirebaseHelper().entryStorageMessage.child(widget.me.uid).child(date);
+      FirebaseHelper().savePic(file, reference).then((imageUrl) {
+        FirebaseHelper().sendMessage(widget.me, widget.partenaire, null, imageUrl);
+      });
 
     }
   }

@@ -3,7 +3,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/controller/ChatController.dart';
 import 'package:flutter_chat/model/Conversation.dart';
+import 'package:flutter_chat/model/DateHelper.dart';
 import 'package:flutter_chat/model/FirebaseHelper.dart';
 import 'package:flutter_chat/widgets/CustomImage.dart';
 
@@ -26,12 +28,19 @@ class _MessagesControllerState extends State<MessagesController> {
           itemBuilder: (BuildContext ctx, DataSnapshot snap, Animation<double> anim, int index) {
             Conversation conversation = new Conversation(snap);
             String sub = conversation.uid == uid ? "Moi: " : "";
-            sub += ("${conversation.message}");
+            sub += ("${conversation.message ?? "image"}");
             return new ListTile(
               leading: CustomImage(conversation.user.imageUrl, conversation.user.initiales, 20),
               title: new Text(conversation.user.fullName()),
               subtitle: new Text(sub),
-              trailing: new Text(conversation.dateString),
+              trailing: new Text(DateHelper().convert(conversation.dateString)),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext ctx) {
+                      return new ChatController(conversation.user);
+                    }
+                ));
+              },
             );
           }
       ),
