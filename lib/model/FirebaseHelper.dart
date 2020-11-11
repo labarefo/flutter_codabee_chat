@@ -91,10 +91,7 @@ class FirebaseHelper {
   String _getMessageRef(String from, String to) {
     List<String> list = [from, to];
     list.sort((a,b) => a.compareTo(b));
-    String ref = "";
-    for(var x in list ){
-      ref += x + "+";
-    }
+    String ref = list.join("+");
     return ref;
   }
 
@@ -108,9 +105,9 @@ class FirebaseHelper {
   final entryStorageMessage = entryStorage.child("messages");
 
   Future<String> savePic(File file, Reference reference) async {
-    UploadTask task = reference.putFile(file);
-    TaskSnapshot snapshot = task.snapshot;
-    return snapshot.ref.getDownloadURL();
+    UploadTask uploadTask = reference.putFile(file);
+
+    return uploadTask.snapshot.ref.getDownloadURL();
   }
 
 }
